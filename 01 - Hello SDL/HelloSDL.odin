@@ -7,34 +7,37 @@ import sdl "vendor:sdl2"
 SCREEN_WIDTH :: 640
 SCREEN_HEIGHT :: 480
 
-main :: proc()
-{
-    fmt.println("Hello world\n")
-
-    // The window we'll be rendering too
-    sdl_window : ^sdl.Window
-
-    // The surface contained by the window
-    sdl_surface : ^sdl.Surface
-
-    // Initialise SDL
-    if (sdl.Init(sdl.INIT_VIDEO) < 0)
-    {
-        fmt.println("SDL could not initialise! SDL_Error: %s", sdl.GetError())
+main :: proc() {
+    if sdl.Init(sdl.INIT_VIDEO) < 0 {
+        fmt.eprintln("SDL could not initialise! SDL_Error: %s", sdl.GetError())
         return
     }
 
-    // Get window surface
-    screen_surface := sdl.GetWindowSurface(sdl_window)
+    window := sdl.CreateWindow(
+        "Hello World",
+        sdl.WINDOWPOS_UNDEFINED,
+        sdl.WINDOWPOS_UNDEFINED,
+        SCREEN_WIDTH, SCREEN_HEIGHT,
+        sdl.WINDOW_SHOWN
+    )
 
-    // Fill the surface white
-    sdl.FillRect(sdl_surface, nil, sdl.MapRGB(sdl_surface.format, 0xFF, 0xFF, 0xFF))
+    if window == nil {
+        fmt.eprintln("Could not create window. SDL_Error: %s", sdl.GetError())
+    }
 
-    // Update the surface
-    sdl.UpdateWindowSurface(sdl_window)
+    screen_surface := sdl.GetWindowSurface(window)
 
-    // Hack to get the window to stay up
+    sdl.FillRect(screen_surface, nil, sdl.MapRGB(screen_surface.format, 0xFF, 0xFF, 0xFF))
+
+    sdl.UpdateWindowSurface(window)
+
     e : sdl.Event
-    quit : bool = false
 
+    for {
+        sdl.PollEvent(&e)
+
+        if e.type == sdl.EventType.QUIT {
+            break
+        }
+    }
 }
