@@ -13,7 +13,16 @@ global_image : ^sdl.Surface
 
 main :: proc() {
 
-    init()
+    if !init() {
+        fmt.eprintln("Failed to init!")
+        return
+    }
+
+    if !load_media() {
+        fmt.eprintln("Failed to load media")
+    }
+
+    sdl.BlitSurface(global_image, nil, global_screen_surface, nil)
     sdl.UpdateWindowSurface(global_window)
 
     e : sdl.Event
@@ -25,11 +34,19 @@ main :: proc() {
             break
         }
     }
+
+    cleanup_and_quit()
+}
+
+cleanup_and_quit :: proc() {
+    sdl.FreeSurface(global_image)
+    sdl.DestroyWindow(global_window)
+    sdl.Quit() // frees the memory for the main window surface along with calling various subsystem Quits.
 }
 
 init :: proc() -> bool {
     if sdl.Init(sdl.INIT_VIDEO) < 0 {
-        fmt.eprintln("SDL could not initialise! SDL_Error: %s", sdl.GetError())
+        fmt.eprintfln("SDL could not initialise! SDL_Error: %s", sdl.GetError())
         return false
     }
 
@@ -42,7 +59,7 @@ init :: proc() -> bool {
     )
 
     if global_window == nil {
-        fmt.eprintln("Could not create window. SDL_Error: %s", sdl.GetError())
+        fmt.eprintfln("Could not create window. SDL_Error: %s", sdl.GetError())
         return false
     }
 
@@ -51,8 +68,14 @@ init :: proc() -> bool {
     return true
 }
 
-cleanup_and_quit :: proc() {
-    sdl.FreeSurface(global_image)
-    sdl.DestroyWindow(global_window)
-    sdl.Quit() // frees the memory for the main window surface along with calling various subsystem Quits.
+load_media :: proc() -> bool {
+    hello_world : cstring = "./HelloWorld.bmp"
+    global_image = sdl.LoadBMP(hello_world)
+
+    if global_image == nil {
+        fmt.eprintfln("Unable to load image %s! SDL Error: %s", hello_world, sdl.GetError())
+        return false
+    }
+
+    return true
 }
