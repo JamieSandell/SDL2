@@ -2,10 +2,10 @@
 
  - Initialise
  - Load the images into an array of surfaces
- - Blit the default image surface into the window surface
+ - Set the default image surface
  - Loop until a quit command is received
-    - Changed the image surface based on key presses
-    - Update the window surface to display the image
+    - Change the image surface based on key presses
+    - Blit the image surface into the window surface
  - Cleanup and quit
 
 > Written with [StackEdit](https://stackedit.io/).
