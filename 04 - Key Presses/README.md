@@ -1,10 +1,11 @@
-[Lazy Foo](https://lazyfoo.net/tutorials/SDL/03_event_driven_programming/index.php)
+[Lazy Foo](https://lazyfoo.net/tutorials/SDL/04_key_presses/index.php)
 
  - Initialise
- - Load the image into a surface
- - Blit the image surface into the window surface
- - Update the window surface to display the image
+ - Load the images into an array of surfaces
+ - Blit the default image surface into the window surface
  - Loop until a quit command is received
+    - Changed the image surface based on key presses
+    - Update the window surface to display the image
  - Cleanup and quit
 
 > Written with [StackEdit](https://stackedit.io/).

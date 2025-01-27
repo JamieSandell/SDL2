@@ -8,10 +8,10 @@ import sdl "vendor:sdl2"
 SCREEN_WIDTH :: 640
 SCREEN_HEIGHT :: 480
 
+global_current_surface : ^sdl.Surface
+global_key_press_surfaces : [KeyPressesSurfaces.Total] ^sdl.Surface
 global_screen_surface : ^sdl.Surface
 global_window : ^sdl.Window
-global_image : ^sdl.Surface
-global_key_press_surfaces : [KeyPressesSurfaces.Total] ^sdl.Surface
 
 KeyPressesSurfaces :: enum {
     Default,
@@ -19,7 +19,7 @@ KeyPressesSurfaces :: enum {
     Down,
     Left,
     Right,
-    Total
+    Total\
 }
 
 main :: proc() {
@@ -35,15 +35,30 @@ main :: proc() {
 
     e : sdl.Event
     quit := false
+    global_current_surface = global_key_press_surfaces[KeyPressesSurfaces.Default]
 
     for !quit {
-        for sdl.PollEvent(&e) != false {
+        for sdl.PollEvent(&e) {
             if e.type == sdl.EventType.QUIT {
                 quit = true
             }
+            else if e.type == sdl.EventType.KEYDOWN {
+                #partial switch e.key.keysym.sym {
+                    case sdl.Keycode.UP:
+                        global_current_surface = global_key_press_surfaces[KeyPressesSurfaces.Up]
+                    case sdl.Keycode.DOWN:
+                        global_current_surface = global_key_press_surfaces[KeyPressesSurfaces.Down]
+                    case sdl.Keycode.LEFT:
+                        global_current_surface = global_key_press_surfaces[KeyPressesSurfaces.Left]
+                    case sdl.Keycode.RIGHT:
+                        global_current_surface = global_key_press_surfaces[KeyPressesSurfaces.Right]
+                    case:
+                        global_current_surface = global_key_press_surfaces[KeyPressesSurfaces.Default]
+                }
+            }
         }
         
-        sdl.BlitSurface(global_image, nil, global_screen_surface, nil)
+        sdl.BlitSurface(global_current_surface, nil, global_screen_surface, nil)
         sdl.UpdateWindowSurface(global_window)
     }    
 
@@ -51,10 +66,8 @@ main :: proc() {
 }
 
 cleanup_and_quit :: proc() {
-    sdl.FreeSurface(global_image)
-
-    for i := 0; i < KeyPressesSurfaces.Total; i += 1 {
-        sdl.FreeSurface(global_key_press_surfaces[i])
+    for surface in global_key_press_surfaces {
+        sdl.FreeSurface(surface)
     }
 
     sdl.DestroyWindow(global_window)
