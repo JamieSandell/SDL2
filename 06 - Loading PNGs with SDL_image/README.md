@@ -1,7 +1,7 @@
-[Lazy Foo](https://lazyfoo.net/tutorials/SDL/05_optimized_surface_loading_and_soft_stretching/index.php)
+[Lazy Foo](https://lazyfoo.net/tutorials/SDL/06_extension_libraries_and_loading_other_image_formats/index.php)
 
  - Initialise
- - Load the image
+ - Load the (PNG) image
  - Optimise and strecth the image
  - Loop until a quit command is received
     - Blit the image surface into the window surface
